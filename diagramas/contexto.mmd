@@ -1,0 +1,37 @@
+```mermaid
+%% Diagrama C4 - Contexto
+%% Contexto del sistema logístico con actores y sistemas externos
+%% NO incluir soluciones propuestas (to-be) — solo relaciones actuales
+
+title Plataforma Logística - Diagrama de Contexto
+
+actor Cliente as cliente
+actor Proveedor as proveedor
+actor Transportista as transportista
+actor "Centro de Distribución" as centro_distribucion
+
+system "Plataforma Logística" as plataforma {
+    %% Este bloque representa el sistema actual (monolito)
+    %% NO descomponer en servicios — solo relaciones externas
+}
+
+system_Ext ERP as erp "SAP"
+system_Ext TMS as tms "Sistema de Gestión de Transportes"
+system_Ext "Pasarela de Pagos" as pasarela_pagos "Stripe"
+system_Ext "Geolocalización" as geolocalizacion "Google Maps API"
+
+%% Relaciones
+cliente --> plataforma : "Realiza pedidos"
+proveedor --> plataforma : "Suministra inventario"
+plataforma --> tms : "Coordina envíos"
+plataforma --> pasarela_pagos : "Procesa pagos"
+plataforma --> geolocalizacion : "Obtiene rutas"
+plataforma --> centro_distribucion : "Gestiona inventario"
+transportista --> tms : "Reporta estatus de envíos"
+
+%% Leyenda
+%% Preguntas guía para completar el diagrama:
+%% - ¿Qué otros actores o sistemas externos faltan en este contexto?
+%% - ¿Qué relaciones adicionales existen entre estos actores y sistemas?
+%% - ¿Qué información fluye en cada relación? (ej: ID de pedido, estado de envío)
+%% - ¿Qué sistemas externos tienen dependencias críticas con la plataforma?

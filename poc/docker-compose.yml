@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # Servicio de API Gateway (puerta de entrada)
+  api-gateway:
+    build:
+      context: ./api-gateway-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - SERVICIO_PEDIDOS_URL=http://pedidos:8001
+      - SERVICIO_ENVIOS_URL=http://envios:8002
+      - SERVICIO_RUTAS_URL=http://rutas:8003
+    depends_on:
+      - pedidos
+      - envios
+      - rutas
+    networks:
+      - logistica-net
+
+  # Servicio simulado de Pedidos
+  pedidos:
+    image: python:3.9-slim
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./api-gateway-service/mock_services/pedidos.py:/app/main.py
+    command: sh -c "pip install fastapi uvicorn && uvicorn main:app --host 0.0.0.0 --port 8001"
+    networks:
+      - logistica-net
+
+  # Servicio simulado de Envíos
+  envios:
+    image: python:3.9-slim
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./api-gateway-service/mock_services/envios.py:/app/main.py
+    command: sh -c "pip install fastapi uvicorn && uvicorn main:app --host 0.0.0.0 --port 8002"
+    networks:
+      - logistica-net
+
+  # Servicio simulado de Rutas
+  rutas:
+    image: python:3.9-slim
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./api-gateway-service/mock_services/rutas.py:/app/main.py
+    command: sh -c "pip install fastapi uvicorn && uvicorn main:app --host 0.0.0.0 --port 8003"
+    networks:
+      - logistica-net
+
+networks:
+  logistica-net:
+    driver: bridge
